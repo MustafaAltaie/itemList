@@ -32,7 +32,7 @@ const ItemList = () => {
     if (newTitle && newContent && newPrice && currentId) {
       const res = await updateItem({ id: currentId, title: newTitle, content: newContent, price: newPrice });
       cancelEditing();
-      alert(res.data.title);
+      //alert(res.data.title);
     }
   };
 
