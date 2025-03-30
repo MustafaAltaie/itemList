@@ -101,15 +101,21 @@ button:hover{
 }
 .userItemContainer{
     padding: 50px;
-    gap: 5px;
+    gap: 2px;
     min-height: 100vh;
 }
 .userItemContainer > div{
     position: relative;
     display: flex;
-    padding: 2px;
+    padding: 5px;
     justify-content: space-between;
     clip-path: polygon(0% 0%, 100% 0%, 97% 50%, 100% 100%, 0% 100%);
+}
+.userItemContainer > div:nth-of-type(odd){
+    transform: translateX(10px);
+}
+.userItemContainer > div:nth-of-type(even){
+    transform: translateX(-10px);
 }
 .userItemContainer > div > h3{
     background: #efead7;
