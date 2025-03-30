@@ -21,7 +21,10 @@ export const itemApi = createApi({
       query: (id) => ({ url: `item/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Item']
     }),
+    checkPassword: builder.mutation({
+      query: (data) => ({ url: 'item/checkpassword', method: 'POST', body: data }),
+    }),
   }),
 });
 
-export const { useCreateItemMutation, useReadItemQuery, useUpdateItemMutation, useDeleteItemMutation } = itemApi;
+export const { useCreateItemMutation, useReadItemQuery, useUpdateItemMutation, useDeleteItemMutation, useCheckPasswordMutation } = itemApi;

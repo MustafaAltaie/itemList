@@ -46,4 +46,13 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.post('/checkpassword', async (req, res) => {
+  try {
+    res.json({ result: req.body.password === process.env.PASSWORD });
+  } catch (err) {
+    console.error("Error checking password:", err);
+    res.status(500).json({ message: `Server error: ${err.message}` });
+  }
+});
+
 export default router;

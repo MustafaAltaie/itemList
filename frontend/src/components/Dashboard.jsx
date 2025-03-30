@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useReadItemQuery, useDeleteItemMutation, useCreateItemMutation, useUpdateItemMutation } from '../features/itemApi';
 import "./App.css";
+import PasswordPopup from "./PasswordPopup";
 
 const ItemList = () => {
   const { data, error, isLoading } = useReadItemQuery();
@@ -9,10 +10,23 @@ const ItemList = () => {
   const [updateItem] = useUpdateItemMutation();
 
   const [newTitle, setNewTitle] = useState('');
-  const [newPrice, setNewPrice] = useState(null);
+  const [newPrice, setNewPrice] = useState('');
   const [newContent, setNewContent] = useState('');
   const [editMode, setEditMode] = useState(false);
-  const [currentId, setCurrentId] = useState(null);
+  const [currentId, setCurrentId] = useState('');
+  const [addItem, setAddItem] = useState(false);
+
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("authenticated") === "true") {
+      setAuthenticated(true);
+    }
+  }, []);
+
+  if (!authenticated) {
+    return <PasswordPopup setAuthenticated={setAuthenticated} />;
+  }
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading items.</p>;
@@ -20,6 +34,7 @@ const ItemList = () => {
   // Handle item creation (POST)
   const handleCreateItem = async () => {
     if (newTitle && newContent && newPrice) {
+      setAddItem(false);
       await createItem({ title: newTitle, content: newContent, price: newPrice });
       setNewTitle('');
       setNewContent('');
@@ -38,6 +53,7 @@ const ItemList = () => {
 
   // Handle edit button click
   const handleEditClick = (item) => {
+    setAddItem(true);
     setEditMode(true);
     setCurrentId(item._id);
     setNewTitle(item.title);
@@ -51,14 +67,16 @@ const ItemList = () => {
     setNewContent('');
     setEditMode(false);
     setCurrentId(null);
+    setAddItem(false);
   }
 
   return (
     <div>
-      <h2>{editMode ? 'Edit Item' : 'Add Item'}</h2>
-
+      {!addItem && <h1 id="addItem" onClick={() => setAddItem(true)}>+</h1>}
       {/* Add or Update Form */}
+      {addItem &&
       <div id="itemForm">
+        <h2>{editMode ? 'Edit Item' : 'Add Item'}</h2>
         <input
           type="number"
           placeholder="Price"
@@ -72,7 +90,6 @@ const ItemList = () => {
           onChange={(e) => setNewTitle(e.target.value)}
         />
         <textarea
-          style = {{ paddingTop: '7px', textAlign: 'center', width: "300px", resize: "none" }}
           placeholder="Content"
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
@@ -80,8 +97,8 @@ const ItemList = () => {
         <button onClick={editMode ? handleUpdateItem : handleCreateItem}>
           {editMode ? 'Update' : 'Add'}
         </button>
-        {editMode && <button onClick={cancelEditing}>Cancel</button>}
-      </div>
+        <button onClick={cancelEditing}>Cancel</button>
+      </div>}
 
       <div className='itemContainer'>
         {data.map((item) => (
